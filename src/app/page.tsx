@@ -1,9 +1,11 @@
 import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
-import { NavigationMenuLink } from "@/components/ui/navigation-menu"
+import { listQuestions } from "@/lib/services/questions"
 
-export default function Home() {
+export default async function Home() {
+  const questions = await listQuestions()
+
   return (
     <div className="space-y-12">
       <section className="rounded-2xl border bg-card px-6 py-10 shadow-sm sm:px-10">
@@ -19,52 +21,44 @@ export default function Home() {
           <Button asChild>
             <Link href="/questions/new">Ask a question</Link>
           </Button>
-          <NavigationMenuLink asChild>
-            <Link
-              className="text-sm font-medium text-primary underline-offset-4 hover:underline"
-              href="/activities"
-            >
-              Browse activities
-            </Link>
-          </NavigationMenuLink>
+          <Link
+            className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+            href="/activities"
+          >
+            Browse activities
+          </Link>
         </div>
       </section>
-      <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {[
-          {
-            title: "Questions",
-            description: "Find answers from classmates and staff.",
-            href: "/questions",
-          },
-          {
-            title: "Activities",
-            description: "Clubs, events, and meetups around campus.",
-            href: "/activities",
-          },
-          {
-            title: "Profile",
-            description: "View your session details in Me.",
-            href: "/me",
-          },
-        ].map((item) => (
-          <Link
-            key={item.title}
-            className="group rounded-xl border bg-card p-5 shadow-sm transition hover:-translate-y-1 hover:border-primary/30"
-            href={item.href}
-          >
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="text-base font-semibold">{item.title}</p>
-                <p className="text-sm text-muted-foreground">
-                  {item.description}
+
+      <section className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold">Latest questions</h2>
+          <Button asChild variant="outline" size="sm">
+            <Link href="/questions/new">New question</Link>
+          </Button>
+        </div>
+        {questions.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            No questions yet. Be the first to ask!
+          </p>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2">
+            {questions.map((question) => (
+              <article
+                key={question.id}
+                className="rounded-xl border bg-card p-4 shadow-sm"
+              >
+                <h3 className="text-lg font-semibold">{question.title}</h3>
+                <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">
+                  {question.content}
                 </p>
-              </div>
-              <span className="text-primary transition group-hover:translate-x-1">
-                →
-              </span>
-            </div>
-          </Link>
-        ))}
+                <p className="mt-3 text-xs text-muted-foreground">
+                  {new Date(question.createdAt).toLocaleString()}
+                </p>
+              </article>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   )
