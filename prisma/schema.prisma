@@ -24,6 +24,8 @@ model User {
   sessions      Session[]
   questions     Question[]
   answers       Answer[]
+  activities    Activity[] @relation("UserActivities")
+  activitySignups ActivitySignup[]
 }
 
 model Account {
@@ -82,4 +84,47 @@ model Answer {
   updatedAt  DateTime @updatedAt
 
   @@index([questionId])
+}
+
+enum ActivityType {
+  CLUB
+  EVENT
+  WORKSHOP
+  SPORTS
+  OTHER
+}
+
+enum ActivitySignupStatus {
+  JOINED
+  CANCELED
+}
+
+model Activity {
+  id         String        @id @default(cuid())
+  type       ActivityType
+  title      String
+  desc       String
+  location   String?
+  startTime  DateTime
+  endTime    DateTime?
+  capacity   Int?
+  creatorId  String?
+  creator    User?         @relation("UserActivities", fields: [creatorId], references: [id], onDelete: SetNull)
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  signups    ActivitySignup[]
+}
+
+model ActivitySignup {
+  id         String                 @id @default(cuid())
+  activityId String
+  activity   Activity               @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status     ActivitySignupStatus   @default(JOINED)
+  createdAt  DateTime               @default(now())
+
+  @@unique([activityId, userId])
+  @@index([activityId, userId])
+  @@index([status])
 }
