@@ -25,11 +25,26 @@ export async function createQuestion(input: CreateQuestionInput): Promise<Questi
 
 export async function listQuestions(limit = 20): Promise<Question[]> {
   if (!process.env.DATABASE_URL) {
-    return []
+    throw new Error("DATABASE_URL is not configured")
   }
 
   return prisma.question.findMany({
     orderBy: { createdAt: "desc" },
     take: limit,
+  })
+}
+
+export async function getQuestionWithAnswers(id: string) {
+  if (!process.env.DATABASE_URL) {
+    throw new Error("DATABASE_URL is not configured")
+  }
+
+  return prisma.question.findUnique({
+    where: { id },
+    include: {
+      answers: {
+        orderBy: { createdAt: "asc" },
+      },
+    },
   })
 }

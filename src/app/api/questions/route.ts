@@ -14,8 +14,10 @@ export async function GET() {
     return NextResponse.json({ ok: true, data: questions })
   } catch (error) {
     console.error(error)
+    const message =
+      error instanceof Error ? error.message : "Failed to load questions"
     return NextResponse.json(
-      { ok: false, error: "Failed to load questions" },
+      { ok: false, error: message },
       { status: 500 }
     )
   }
@@ -41,8 +43,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true, data: question }, { status: 201 })
   } catch (error) {
     console.error(error)
+    const message =
+      error instanceof Error ? error.message : "Failed to create question"
     return NextResponse.json(
-      { ok: false, error: "Failed to create question" },
+      { ok: false, error: message },
       { status: 500 }
     )
   }
