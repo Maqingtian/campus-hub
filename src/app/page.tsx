@@ -65,6 +65,11 @@ export default async function Home() {
                     {new Date(question.createdAt).toLocaleString()}
                   </p>
                 </Link>
+                <div className="mt-3">
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={`/questions/${question.id}`}>View</Link>
+                  </Button>
+                </div>
               </article>
             ))}
           </div>

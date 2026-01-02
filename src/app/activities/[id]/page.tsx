@@ -35,6 +35,7 @@ export default async function ActivityDetailPage({ params }: PageProps) {
     activity.capacity != null
       ? `${joinedCount}/${activity.capacity} joined`
       : `${joinedCount} joined`
+  const isFull = activity.capacity != null && joinedCount >= activity.capacity
 
   return (
     <div className="space-y-6">
@@ -72,6 +73,7 @@ export default async function ActivityDetailPage({ params }: PageProps) {
               activityId={activity.id}
               capacityText={capacityText}
               isJoined={isJoined}
+              isFull={isFull}
             />
           </div>
         )}

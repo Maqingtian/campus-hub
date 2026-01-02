@@ -9,9 +9,10 @@ type SignupActionsProps = {
   activityId: string
   isJoined: boolean
   capacityText: string
+  isFull: boolean
 }
 
-export function SignupActions({ activityId, isJoined, capacityText }: SignupActionsProps) {
+export function SignupActions({ activityId, isJoined, capacityText, isFull }: SignupActionsProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -47,8 +48,8 @@ export function SignupActions({ activityId, isJoined, capacityText }: SignupActi
             {loading ? "Leaving..." : "Cancel signup"}
           </Button>
         ) : (
-          <Button disabled={loading} onClick={() => void handleAction("POST")}>
-            {loading ? "Joining..." : "Sign up"}
+          <Button disabled={loading || isFull} onClick={() => void handleAction("POST")}>
+            {loading ? "Joining..." : isFull ? "Full" : "Sign up"}
           </Button>
         )}
         <span className="text-sm text-muted-foreground">{capacityText}</span>

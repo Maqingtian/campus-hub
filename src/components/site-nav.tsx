@@ -1,5 +1,7 @@
 import Link from "next/link"
+import { getServerSession } from "next-auth"
 
+import { AuthButtons } from "@/components/auth-buttons"
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -7,6 +9,7 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
+import { authOptions } from "@/lib/auth"
 
 const links = [
   { href: "/", label: "Home" },
@@ -15,7 +18,10 @@ const links = [
   { href: "/me", label: "Me" },
 ]
 
-export function SiteNav() {
+export async function SiteNav() {
+  const session = await getServerSession(authOptions)
+  const userLabel = session?.user?.name ?? session?.user?.email ?? undefined
+
   return (
     <header className="border-b bg-background/80 backdrop-blur-sm">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
@@ -38,6 +44,7 @@ export function SiteNav() {
             ))}
           </NavigationMenuList>
         </NavigationMenu>
+        <AuthButtons userLabel={userLabel} />
       </div>
     </header>
   )

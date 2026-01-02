@@ -32,7 +32,12 @@ export default function NewQuestionPage() {
         return
       }
 
-      router.push("/")
+      const questionId = data?.data?.id
+      if (questionId) {
+        router.push(`/questions/${questionId}`)
+      } else {
+        router.push("/")
+      }
       router.refresh()
     } catch (err) {
       console.error(err)

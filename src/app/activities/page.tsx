@@ -61,6 +61,7 @@ export default async function ActivitiesPage() {
                 <p className="mt-3 text-xs text-muted-foreground">
                   {new Date(activity.startTime).toLocaleString()}
                 </p>
+                <p className="mt-2 text-sm font-medium text-primary">View</p>
               </Link>
             )
           })}
