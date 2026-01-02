@@ -16,6 +16,27 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Local DB setup
+
+Run Postgres with Docker:
+
+```bash
+docker run --name campus-postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=campus_hub -p 5432:5432 -d postgres:16
+```
+
+Environment:
+
+```
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/campus_hub?schema=public"
+```
+
+Prisma:
+
+```bash
+pnpm prisma generate
+pnpm prisma migrate dev --name init
+```
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
