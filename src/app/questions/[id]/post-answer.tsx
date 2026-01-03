@@ -100,7 +100,11 @@ export function AnswerForm({ questionId }: AnswerFormProps) {
             onChange={() => setError(null)}
           />
         </div>
-        {error ? <p className="text-sm text-destructive">{error}</p> : null}
+        {error ? (
+          <p className="text-sm text-destructive">
+            [AnswerForm error] {error}
+          </p>
+        ) : null}
         <div className="flex items-center gap-3">
           <Button disabled={isSubmitting} type="submit">
             {isSubmitting ? "Posting..." : "Post answer"}
