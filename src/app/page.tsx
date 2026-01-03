@@ -14,6 +14,8 @@ export default async function Home() {
       err instanceof Error ? err.message : "Failed to load questions. Check DATABASE_URL."
   }
 
+  const previewQuestions = questions.slice(0, 5)
+
   return (
     <div className="space-y-12">
       <section className="rounded-2xl border bg-card px-6 py-10 shadow-sm sm:px-10">
@@ -40,18 +42,26 @@ export default async function Home() {
 
       <section className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Latest questions</h2>
-          <Button asChild variant="outline" size="sm">
-            <Link href="/questions/new">New question</Link>
-          </Button>
+          <div>
+            <h2 className="text-xl font-semibold">Latest questions</h2>
+            <p className="text-sm text-muted-foreground">A quick preview of recent activity.</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button asChild variant="outline" size="sm">
+              <Link href="/questions">View all</Link>
+            </Button>
+            <Button asChild size="sm">
+              <Link href="/questions/new">Ask a question</Link>
+            </Button>
+          </div>
         </div>
         {error ? (
           <p className="text-sm text-destructive">{error}</p>
-        ) : questions.length === 0 ? (
+        ) : previewQuestions.length === 0 ? (
           <p className="text-sm text-muted-foreground">No questions yet. Be the first to ask!</p>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2">
-            {questions.map((question) => (
+            {previewQuestions.map((question) => (
               <article
                 key={question.id}
                 className="rounded-xl border bg-card p-4 shadow-sm"
@@ -65,11 +75,6 @@ export default async function Home() {
                     {new Date(question.createdAt).toLocaleString()}
                   </p>
                 </Link>
-                <div className="mt-3">
-                  <Button asChild size="sm" variant="outline">
-                    <Link href={`/questions/${question.id}`}>View</Link>
-                  </Button>
-                </div>
               </article>
             ))}
           </div>
