@@ -14,6 +14,20 @@ export default function NewQuestionPage() {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
+    const rawTags = String(formData.get("tags") ?? "")
+    const parsedTags = rawTags
+      .split(",")
+      .map((tag) => tag.trim().toLowerCase())
+      .filter(Boolean)
+    const uniqueTags = Array.from(new Set(parsedTags))
+
+    if (uniqueTags.length > 3) {
+      const message = "Up to 3 tags are allowed"
+      setError(message)
+      toast.error(message)
+      return
+    }
+
     setError(null)
     setIsSubmitting(true)
     try {
@@ -23,6 +37,7 @@ export default function NewQuestionPage() {
         body: JSON.stringify({
           title: formData.get("title"),
           content: formData.get("content"),
+          tags: uniqueTags,
         }),
       })
 
@@ -89,6 +104,20 @@ export default function NewQuestionPage() {
             placeholder="Include details so others can help."
             required
           />
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium" htmlFor="tags">
+            Tags (comma separated, max 3)
+          </label>
+          <input
+            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            id="tags"
+            name="tags"
+            placeholder="e.g. housing, cafeteria, library"
+          />
+          <p className="text-xs text-muted-foreground">
+            Tags are lowercased and limited to 3.
+          </p>
         </div>
 
         {error ? <p className="text-sm text-destructive">{error}</p> : null}

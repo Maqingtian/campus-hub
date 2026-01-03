@@ -10,13 +10,12 @@ export default async function Home() {
   let error: string | null = null
 
   try {
-    questions = await listQuestions()
+    questions = await listQuestions({ limit: 5 })
   } catch (err) {
     error =
       err instanceof Error ? err.message : "Failed to load questions. Check DATABASE_URL."
   }
-
-  const previewQuestions = questions.slice(0, 5)
+  const previewQuestions = questions
 
   return (
     <div className="space-y-12">

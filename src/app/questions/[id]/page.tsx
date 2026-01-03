@@ -34,6 +34,18 @@ export default async function QuestionDetailPage({ params }: PageProps) {
         <p className="mt-3 whitespace-pre-wrap text-muted-foreground">
           {question.content}
         </p>
+        {question.tags.length > 0 ? (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {question.tags.map((tag) => (
+              <span
+                key={tag.tagId}
+                className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground"
+              >
+                {tag.tag.name}
+              </span>
+            ))}
+          </div>
+        ) : null}
         <p className="mt-3 text-xs text-muted-foreground">
           Asked on {new Date(question.createdAt).toLocaleString()}
         </p>
