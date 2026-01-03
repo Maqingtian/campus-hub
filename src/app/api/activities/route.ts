@@ -6,14 +6,16 @@ import { authOptions } from "@/lib/auth"
 import { createActivity, listActivities } from "@/lib/services/activities"
 import { getServerSession } from "next-auth"
 
+const dateCoerce = z.coerce.date().refine((d) => !isNaN(d.getTime()), "Invalid date")
+
 const createActivitySchema = z.object({
   type: z.nativeEnum(ActivityType),
   title: z.string().min(3, "Title is too short"),
   desc: z.string().min(1, "Description is required"),
   location: z.string().optional(),
-  startTime: z.string().datetime(),
-  endTime: z.string().datetime().optional(),
-  capacity: z.number().int().positive().optional(),
+  startTime: dateCoerce,
+  endTime: dateCoerce.optional(),
+  capacity: z.coerce.number().int().positive().optional(),
 })
 
 export async function GET(req: Request) {
@@ -62,8 +64,8 @@ export async function POST(req: Request) {
       title: parsed.data.title,
       desc: parsed.data.desc,
       location: parsed.data.location ?? null,
-      startTime: new Date(parsed.data.startTime),
-      endTime: parsed.data.endTime ? new Date(parsed.data.endTime) : null,
+      startTime: parsed.data.startTime,
+      endTime: parsed.data.endTime ?? null,
       capacity: parsed.data.capacity ?? null,
       creatorId: userId ?? null,
     })
