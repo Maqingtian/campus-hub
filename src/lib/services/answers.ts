@@ -30,7 +30,7 @@ export async function listAnswers(questionId: string): Promise<Answer[]> {
   }
 
   return prisma.answer.findMany({
-    where: { questionId },
+    where: { questionId, deletedAt: null },
     orderBy: { createdAt: "asc" },
   })
 }

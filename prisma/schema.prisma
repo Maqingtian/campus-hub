@@ -14,12 +14,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  USER
+  ADMIN
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
   email         String?   @unique
   emailVerified DateTime?
   image         String?
+  role          UserRole  @default(USER)
   accounts      Account[]
   sessions      Session[]
   questions     Question[]
@@ -71,6 +77,7 @@ model Question {
   author    User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  deletedAt DateTime?
   answers   Answer[]
   tags      QuestionTag[]
 }
@@ -84,6 +91,7 @@ model Answer {
   author     User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  deletedAt  DateTime?
 
   @@index([questionId])
 }
@@ -120,6 +128,7 @@ model Activity {
   creator    User?         @relation("UserActivities", fields: [creatorId], references: [id], onDelete: SetNull)
   createdAt  DateTime      @default(now())
   updatedAt  DateTime      @updatedAt
+  isHidden   Boolean       @default(false)
   signups    ActivitySignup[]
 }
 

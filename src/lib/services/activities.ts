@@ -39,10 +39,11 @@ export async function createActivity(input: CreateActivityInput) {
   })
 }
 
-export async function listActivities(filters: ListActivitiesFilters = {}) {
+export async function listActivities(filters: ListActivitiesFilters = {}, includeHidden = false) {
   ensureDb()
   return prisma.activity.findMany({
     where: {
+      isHidden: includeHidden ? undefined : false,
       type: filters.type,
     },
     orderBy: { startTime: "asc" },
@@ -58,7 +59,7 @@ export async function listActivities(filters: ListActivitiesFilters = {}) {
 export async function getActivityWithSignupState(activityId: string, userId?: string) {
   ensureDb()
   const activity = await prisma.activity.findUnique({
-    where: { id: activityId },
+    where: { id: activityId, isHidden: false },
     include: {
       signups: {
         where: {

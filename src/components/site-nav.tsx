@@ -19,12 +19,14 @@ const links = [
   { href: "/activities", label: "Activities" },
   { href: "/notifications", label: "Notifications" },
   { href: "/me", label: "Me" },
+  { href: "/admin", label: "Admin", adminOnly: true },
 ]
 
 export async function SiteNav() {
   const session = await getServerSession(authOptions)
   const userLabel = session?.user?.name ?? session?.user?.email ?? undefined
-  const userId = (session?.user as { id?: string } | undefined)?.id
+  const userId = (session?.user as { id?: string; role?: string } | undefined)?.id
+  const isAdminUser = (session?.user as { role?: string } | undefined)?.role === "ADMIN"
 
   let unread = 0
   if (userId && process.env.DATABASE_URL) {
@@ -43,7 +45,9 @@ export async function SiteNav() {
         </Link>
         <NavigationMenu>
           <NavigationMenuList>
-            {links.map((link) => (
+            {links.map((link) => {
+              if (link.adminOnly && !isAdminUser) return null
+              return (
               <NavigationMenuItem key={link.href}>
                 <NavigationMenuLink asChild>
                   <Link
@@ -59,7 +63,7 @@ export async function SiteNav() {
                   </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
-            ))}
+            )})}
           </NavigationMenuList>
         </NavigationMenu>
         <AuthButtons userLabel={userLabel} />

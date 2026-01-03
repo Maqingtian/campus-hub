@@ -79,6 +79,7 @@ export async function listQuestions(
   return prisma.question.findMany({
     where: {
       AND: [
+        { deletedAt: null },
         q
           ? {
               OR: [
@@ -102,7 +103,10 @@ export async function listQuestions(
     },
     orderBy: { createdAt: "desc" },
     take: limit,
-    include: { tags: { include: { tag: true } } },
+    include: {
+      tags: { include: { tag: true } },
+      answers: false,
+    },
   })
 }
 
@@ -112,9 +116,10 @@ export async function getQuestionWithAnswers(id: string) {
   }
 
   return prisma.question.findUnique({
-    where: { id },
+    where: { id, deletedAt: null },
     include: {
       answers: {
+        where: { deletedAt: null },
         orderBy: { createdAt: "asc" },
       },
       tags: { include: { tag: true } },
