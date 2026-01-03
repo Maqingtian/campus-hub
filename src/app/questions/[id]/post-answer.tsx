@@ -4,6 +4,7 @@ import { FormEvent, useState } from "react"
 import { useRouter } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
+import { toast } from "sonner"
 
 type AnswerFormProps = {
   questionId: string
@@ -16,31 +17,67 @@ export function AnswerForm({ questionId }: AnswerFormProps) {
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    if (isSubmitting) return
+
     const formData = new FormData(event.currentTarget)
     const content = String(formData.get("content") ?? "")
+    const requestId = crypto.randomUUID()
 
-    setError(null)
     setIsSubmitting(true)
+    setError(null)
+
+    if (process.env.NODE_ENV !== "production") {
+      console.log("[answer-submit]", { requestId, contentLen: content.length })
+    }
 
     try {
       const res = await fetch(`/api/questions/${questionId}/answers`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        // minimal request correlation for debugging
+        cache: "no-store",
+        headers: {
+          "Content-Type": "application/json",
+          "x-request-id": requestId,
+        },
         body: JSON.stringify({ content }),
       })
 
       const data = await res.json().catch(() => null)
 
-      if (!res.ok || !data?.ok) {
-        setError(data?.error ?? "Failed to post answer")
+      if (process.env.NODE_ENV !== "production") {
+        console.log("[answer-response]", {
+          requestId,
+          status: res.status,
+          ok: res.ok,
+          data,
+        })
+      }
+
+      // Non-2xx: use server-provided error when available
+      if (!res.ok) {
+        const message = data?.error ?? "Failed to post answer"
+        setError(message)
+        toast.error(message)
         return
       }
 
+      // 2xx but API reports ok:false
+      if (data?.ok === false) {
+        const message = data.error ?? "Failed to post answer"
+        setError(message)
+        toast.error(message)
+        return
+      }
+
+      // Success path
+      setError(null)
       event.currentTarget.reset()
+      toast.success("Answer posted")
       router.refresh()
     } catch (err) {
       console.error(err)
       setError("Failed to post answer")
+      toast.error("Failed to post answer")
     } finally {
       setIsSubmitting(false)
     }
@@ -60,6 +97,7 @@ export function AnswerForm({ questionId }: AnswerFormProps) {
             name="content"
             placeholder="Share your thoughts..."
             required
+            onChange={() => setError(null)}
           />
         </div>
         {error ? <p className="text-sm text-destructive">{error}</p> : null}
