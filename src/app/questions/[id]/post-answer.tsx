@@ -42,7 +42,14 @@ export function AnswerForm({ questionId }: AnswerFormProps) {
         body: JSON.stringify({ content }),
       })
 
-      const data = await res.json().catch(() => null)
+      // Robust JSON parsing to avoid json() throwing
+      const text = await res.text()
+      let data: unknown = null
+      try {
+        data = text ? JSON.parse(text) : null
+      } catch {
+        data = null
+      }
 
       if (process.env.NODE_ENV !== "production") {
         console.log("[answer-response]", {
@@ -73,7 +80,8 @@ export function AnswerForm({ questionId }: AnswerFormProps) {
       setError(null)
       event.currentTarget.reset()
       toast.success("Answer posted")
-      router.refresh()
+      // Slight delay to avoid race with streaming refresh in some browsers
+      setTimeout(() => router.refresh(), 0)
     } catch (err) {
       console.error(err)
       setError("Failed to post answer")
