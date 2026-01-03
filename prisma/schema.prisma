@@ -26,6 +26,7 @@ model User {
   answers       Answer[]
   activities    Activity[] @relation("UserActivities")
   activitySignups ActivitySignup[]
+  notifications Notification[]
 }
 
 model Account {
@@ -99,6 +100,12 @@ enum ActivitySignupStatus {
   CANCELED
 }
 
+enum NotificationType {
+  ANSWER_ON_YOUR_QUESTION
+  ACTIVITY_SIGNUP_CONFIRMED
+  ACTIVITY_SIGNUP_CANCELED
+}
+
 model Activity {
   id         String        @id @default(cuid())
   type       ActivityType
@@ -128,3 +135,20 @@ model ActivitySignup {
   @@index([activityId, userId])
   @@index([status])
 }
+
+model Notification {
+  id        String            @id @default(cuid())
+  userId    String
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  title     String
+  body      String?
+  link      String?
+  isRead    Boolean           @default(false)
+  readAt    DateTime?
+  createdAt DateTime          @default(now())
+
+  @@index([userId, isRead, createdAt])
+}
+
+// Reverse relation added near top

@@ -63,15 +63,17 @@ export function AnswerForm({ questionId }: AnswerFormProps) {
 
       // Non-2xx: use server-provided error when available
       if (!res.ok) {
-        const message = data?.error ?? "Failed to post answer"
+        const message =
+          (data as { error?: string } | null)?.error ?? "Failed to post answer"
         setError(message)
         toast.error(message)
         return
       }
 
       // 2xx but API reports ok:false
-      if (data?.ok === false) {
-        const message = data.error ?? "Failed to post answer"
+      if (data && (data as { ok?: boolean }).ok === false) {
+        const message =
+          (data as { error?: string })?.error ?? "Failed to post answer"
         setError(message)
         toast.error(message)
         return

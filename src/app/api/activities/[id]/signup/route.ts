@@ -1,7 +1,9 @@
+import { NotificationType } from "@prisma/client"
 import { NextResponse } from "next/server"
 import { z } from "zod"
 
 import { authOptions } from "@/lib/auth"
+import { createNotification } from "@/lib/services/notifications"
 import { cancelSignup, signupActivity } from "@/lib/services/activities"
 import { getServerSession } from "next-auth"
 
@@ -32,6 +34,14 @@ export async function POST(req: Request, context: RouteContext) {
     }
 
     const signup = await signupActivity(context.params.id, userId)
+
+    await createNotification({
+      userId,
+      type: NotificationType.ACTIVITY_SIGNUP_CONFIRMED,
+      title: "Joined activity",
+      link: `/activities/${context.params.id}`,
+    })
+
     return NextResponse.json({ ok: true, data: signup }, { status: 201 })
   } catch (error) {
     console.error(error)
@@ -62,6 +72,14 @@ export async function DELETE(req: Request, context: RouteContext) {
     }
 
     const result = await cancelSignup(context.params.id, userId)
+
+    await createNotification({
+      userId,
+      type: NotificationType.ACTIVITY_SIGNUP_CANCELED,
+      title: "Canceled activity signup",
+      link: `/activities/${context.params.id}`,
+    })
+
     return NextResponse.json({ ok: true, data: result })
   } catch (error) {
     console.error(error)

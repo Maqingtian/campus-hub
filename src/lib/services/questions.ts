@@ -48,3 +48,14 @@ export async function getQuestionWithAnswers(id: string) {
     },
   })
 }
+
+export async function getQuestionAuthor(id: string) {
+  if (!process.env.DATABASE_URL) {
+    throw new Error("DATABASE_URL is not configured")
+  }
+
+  return prisma.question.findUnique({
+    where: { id },
+    select: { authorId: true },
+  })
+}
