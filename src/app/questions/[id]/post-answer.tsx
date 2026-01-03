@@ -1,6 +1,6 @@
 "use client"
 
-import { FormEvent, useState } from "react"
+import { FormEvent, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
@@ -14,6 +14,7 @@ export function AnswerForm({ questionId }: AnswerFormProps) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const formRef = useRef<HTMLFormElement | null>(null)
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -78,7 +79,7 @@ export function AnswerForm({ questionId }: AnswerFormProps) {
 
       // Success path
       setError(null)
-      event.currentTarget.reset()
+      formRef.current?.reset()
       toast.success("Answer posted")
       // Slight delay to avoid race with streaming refresh in some browsers
       setTimeout(() => router.refresh(), 0)
@@ -94,7 +95,11 @@ export function AnswerForm({ questionId }: AnswerFormProps) {
   return (
     <div className="rounded-xl border bg-card p-6 shadow-sm">
       <h2 className="text-lg font-semibold">Your answer</h2>
-      <form className="mt-4 space-y-3" onSubmit={onSubmit}>
+      <form
+        ref={formRef}
+        className="mt-4 space-y-3"
+        onSubmit={onSubmit}
+      >
         <div className="space-y-2">
           <label className="text-sm font-medium" htmlFor="content">
             Content
