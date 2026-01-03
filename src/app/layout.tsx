@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { SiteNav } from "@/components/site-nav";
+import { Toaster } from "sonner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -31,6 +32,7 @@ export default function RootLayout({
       >
         <SiteNav />
         <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
+        <Toaster richColors position="top-right" />
       </body>
     </html>
   );

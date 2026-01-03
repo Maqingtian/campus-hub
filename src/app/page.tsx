@@ -3,6 +3,8 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { listQuestions } from "@/lib/services/questions"
 
+export const dynamic = "force-dynamic"
+
 export default async function Home() {
   let questions: Awaited<ReturnType<typeof listQuestions>> = []
   let error: string | null = null

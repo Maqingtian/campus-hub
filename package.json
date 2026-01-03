@@ -13,6 +13,7 @@
     "@prisma/client": "^5.22.0",
     "@radix-ui/react-navigation-menu": "^1.2.14",
     "@radix-ui/react-slot": "^1.2.4",
+    "sonner": "^2.0.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.562.0",
@@ -20,6 +21,7 @@
     "next-auth": "^4.24.13",
     "react": "^18",
     "react-dom": "^18",
+    "sonner": "^2.0.7",
     "tailwind-merge": "^3.4.0",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^4.3.4"

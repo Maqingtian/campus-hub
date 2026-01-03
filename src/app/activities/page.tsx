@@ -3,6 +3,8 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { listActivities } from "@/lib/services/activities"
 
+export const dynamic = "force-dynamic"
+
 export default async function ActivitiesPage() {
   let activities: Awaited<ReturnType<typeof listActivities>> = []
   let error: string | null = null

@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react"
 import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 
@@ -29,6 +30,7 @@ export default function NewQuestionPage() {
 
       if (!res.ok || !data?.ok) {
         setError(data?.error ?? "Failed to create question")
+        toast.error(data?.error ?? "Failed to create question")
         return
       }
 
@@ -39,9 +41,11 @@ export default function NewQuestionPage() {
         router.push("/")
       }
       router.refresh()
+      toast.success("Question created")
     } catch (err) {
       console.error(err)
       setError("Failed to create question")
+      toast.error("Failed to create question")
     } finally {
       setIsSubmitting(false)
     }

@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { ActivityType } from "@prisma/client"
+import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 
@@ -42,14 +43,17 @@ export default function NewActivityPage() {
       const data = await res.json().catch(() => null)
       if (!res.ok || !data?.ok) {
         setError(data?.error ?? "Failed to create activity")
+        toast.error(data?.error ?? "Failed to create activity")
         return
       }
 
+      toast.success("Activity created")
       router.push(`/activities/${data.data.id}`)
       router.refresh()
     } catch (err) {
       console.error(err)
       setError("Failed to create activity")
+      toast.error("Failed to create activity")
     } finally {
       setIsSubmitting(false)
     }

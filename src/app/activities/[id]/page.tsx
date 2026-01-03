@@ -12,6 +12,8 @@ type PageProps = {
   params: { id: string }
 }
 
+export const dynamic = "force-dynamic"
+
 export default async function ActivityDetailPage({ params }: PageProps) {
   if (!process.env.DATABASE_URL) {
     return (
